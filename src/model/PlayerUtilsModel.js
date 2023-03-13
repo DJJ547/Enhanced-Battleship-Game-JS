@@ -1,4 +1,4 @@
-import ship from './shipModel.js';
+import shipModel from './shipModel.js';
 
 export default class PlayerUtilsModel {
     constructor(length, width) {
@@ -85,18 +85,45 @@ export default class PlayerUtilsModel {
         for(let i = 0; i < posArr.length; i++) {
             this.shipGrid[posArr[i][0]][posArr[i][1]] = false;
         }
-        //clear position array in ship
-        //...
+        //clear position array in current ship
+        ship.posArray = [];
+        ship.hitArray = [];
     }
 
+    //only called before game starts
     removeAllShips() {
         this.setupMap();
         this.shipArray = [];
         //clear position arrays in each ship
-        //...
+        for (const ship in this.shipArray){
+            ship.posArray = [];
+            ship.hitArray = [];
+        }
     }
 
-    AiAttacks() {
+    // validateAiAttack(pos) {
+    //     if(this.hitGrid[pos[0]][pos[1]] == true) {
+    //         console.log('Position has been hit, Please enter a valid attack position');
+    //         return false;
+    //     }
+    //     return true;
+    // }
 
-    }
+    // shootPlayerMap(pos) {
+    //     this.hitGrid[pos[0]][pos[1]] = true;
+    //     let JsonInputPos = JSON.stringify(pos);
+
+    //     //traverse the shipArray and mark the position on the ship as true
+    //     for(let i = 0; i < this.shipArray.length; i++) {
+    //         for(let j = 0; j < this.shipArray[i].posArray.length; j++) {
+    //             let JsonPos = JSON.stringify(this.shipArray[i].posArray[j]);
+    //             if(JsonPos == JsonInputPos) {
+    //                 this.shipArray[i].hitArray[this.shipArray[i].posArray.indexOf(pos)] = true;
+    //                 console.log('this shot hit a ship')
+    //                 break;
+    //             }
+    //         }
+    //         break;
+    //     }
+    // }
 }

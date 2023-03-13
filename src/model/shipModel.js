@@ -36,6 +36,7 @@ export default class ShipModel {
             this.hitArray[this.posArray.indexOf(pos)] = true;
         }else{
             console.log('out of ship positions');
+            return;
         }
     }
 

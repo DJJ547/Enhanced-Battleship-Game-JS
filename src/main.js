@@ -37,12 +37,19 @@ function main() {
     player.placeShip(ship1, [...shipPos], shipDirection);
   }
 
+  // player.printMap();
+
+  // console.log(player.shipArray)
+  // player.removeShip(ship1);
+  console.log(player.shipArray)
+  // player.printMap();
+
+  let shootPos = [3, 4]
+  if(player.validateAiAttack([...shootPos])){
+    player.shootPlayerMap([...shootPos]);
+  }
   player.printMap();
 
-  console.log(player.shipArray)
-  player.removeShip(ship1);
-  console.log(player.shipArray)
-  player.printMap();
 }
 
 main()
