@@ -55,26 +55,18 @@ export default class AiUtilsModel {
         return true;
     }
 
-    placeShip(ship, startPos, direction) {
-        this.shipArray.push(ship);
-        this.numOfShips++;
-        //update ship pos
-        console.log(`position array before:${ship.posArray}`)
-        ship.updatePos([...startPos], direction)
-        console.log(`position array:${ship.posArray}`)
-        //update grid
-        if(direction == 0) {
-            for (var i = 0; i < ship.length; i++) {
-                this.shipGrid[startPos[0]][startPos[1]] = true;
-                startPos[1]++;
-            }
+    randomlyPlaceAllShips() {
+        
+    }
 
-        }else{
-            for (var i = 0; i < ship.length; i++) {
-                this.shipGrid[startPos[0]][startPos[1]] = true;
-                startPos[0]++;
-            }
+    #checkEveryCol() {
+        for (const row of this.shipGrid) {
+            
         }
+    }
+
+    #checkEveryRow() {
+
     }
 
     removeShip(ship) {
