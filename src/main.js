@@ -2,16 +2,6 @@ import PlayerUtilsModel from './model/PlayerUtilsModel.js';
 import AiUtilsModel from './model/AiUtilsModel.js';
 import ShipModel from './model/shipModel.js';
 
-// function counter() {
-// let seconds = 0;
-// setInterval(() => {
-//   seconds += 1;
-//   document.getElementById('app').innerHTML = `<p>You have been here for ${seconds} seconds.</p>`;
-// }, 1000);
-// }
-
-// counter();
-
 const ship1 = new Map();
 ship1.set([0,3], true);
 ship1.set([1,3], true);
@@ -27,28 +17,45 @@ function main() {
 
   let player = new PlayerUtilsModel(length, width);
   let aiPlayer = new AiUtilsModel(length, width);
-  player.printMap();
   const shipPos = [3,4];
   let shipDirection = 0;
-  const shipLength = 3;
-  const ship1 = new ShipModel(shipLength);
 
-  if(player.validatePos(ship1, [...shipPos], shipDirection)) {
-    player.placeShip(ship1, [...shipPos], shipDirection);
-  }
+  const shipLength1 = 2;
+  const ship1 = new ShipModel(shipLength1);
+  const shipLength2 = 3;
+  const ship2 = new ShipModel(shipLength2);
+
+  // if(player.validatePos(ship1, [...shipPos], shipDirection)) {
+  //   player.placeShip(ship1, [...shipPos], shipDirection);
+  // }
 
   // player.printMap();
 
   // console.log(player.shipArray)
   // player.removeShip(ship1);
-  console.log(player.shipArray)
+  // console.log(player.shipArray)
   // player.printMap();
-
-  let shootPos = [3, 4]
-  if(player.validateAiAttack([...shootPos])){
-    player.shootPlayerMap([...shootPos]);
+  const ships = [ship1, ship2];
+  aiPlayer.setShipArray(ships);
+  aiPlayer.testChangeShipGrid();
+  aiPlayer.printMap();
+  let verStartMap = aiPlayer.checkEveryCol();
+  for (let [key, value] of verStartMap) {
+    console.log(key + '=' + value);
   }
-  player.printMap();
+  let allVerStartPos = aiPlayer.findVerticalStartPos(verStartMap, 3);
+  for (let pos of allVerStartPos) {
+    console.log(pos);
+  }
+  aiPlayer.randomlyPlaceAllShips();
+  console.log('================== after randomly assign ships ===================')
+  aiPlayer.printMap();
+
+  // let shootPos = [3, 4]
+  // if(aiPlayer.validatePlayerAttack([...shootPos])){
+  //   aiPlayer.shootAiMap([...shootPos]);
+  // }
+  // aiPlayer.printMap();
 
 }
 
