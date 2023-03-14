@@ -22,8 +22,14 @@ function main() {
 
   const shipLength1 = 2;
   const ship1 = new ShipModel(shipLength1);
-  const shipLength2 = 3;
+  const shipLength2 = 2;
   const ship2 = new ShipModel(shipLength2);
+  const shipLength3 = 3;
+  const ship3 = new ShipModel(shipLength3);
+  const shipLength4 = 3;
+  const ship4 = new ShipModel(shipLength4);
+  const shipLength5 = 4;
+  const ship5 = new ShipModel(shipLength5);
 
   // if(player.validatePos(ship1, [...shipPos], shipDirection)) {
   //   player.placeShip(ship1, [...shipPos], shipDirection);
@@ -35,25 +41,18 @@ function main() {
   // player.removeShip(ship1);
   // console.log(player.shipArray)
   // player.printMap();
-  const ships = [ship1, ship2];
+  const ships = [ship1, ship2, ship3, ship4, ship5];
   aiPlayer.setShipArray(ships);
-  aiPlayer.testChangeShipGrid();
   aiPlayer.printMap();
-  let verStartMap = aiPlayer.checkEveryCol();
-  for (let [key, value] of verStartMap) {
-    console.log(key + '=' + value);
-  }
-  let allVerStartPos = aiPlayer.findVerticalStartPos(verStartMap, 3);
-  for (let pos of allVerStartPos) {
-    console.log(pos);
-  }
   aiPlayer.randomlyPlaceAllShips();
   console.log('================== after randomly assign ships ===================')
   aiPlayer.printMap();
 
+  console.log(aiPlayer.shipArray)
+
   // let shootPos = [3, 4]
   // if(aiPlayer.validatePlayerAttack([...shootPos])){
-  //   aiPlayer.shootAiMap([...shootPos]);
+  //   aiPlayer.playerShootAiMap([...shootPos]);
   // }
   // aiPlayer.printMap();
 

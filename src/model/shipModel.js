@@ -9,11 +9,11 @@ export default class ShipModel {
     }
 
     //For direction, 0 = horizontal, 1 = vertical
-    updatePos(placePos, direction) {
+    updatePosAndDir(placePos, direction) {
+        this.direction = direction;
         if(direction == 0){
             for(var i = 0; i < this.length; i++) {
                 this.posArray.push([...placePos]);
-                console.log(`in updatePos: ${this.posArray}`)
                 this.hitArray.push(false);
                 placePos[1]++;
             }

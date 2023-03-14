@@ -64,10 +64,10 @@ export default class AiUtilsModel {
             let oneOrZero = (Math.random()>=0.5)? 1 : 0;
             let len = ship.length;
             if (oneOrZero == 1) {
-                let posArr = this.findVerticalStartPos(this.checkEveryCol(), len);
+                let posArr = this.#findVerticalStartPos(this.#checkEveryCol(), len);
                 let max = posArr.length - 1;
                 let min = 0;
-                let diff = max - min;
+                let diff = max - min + 1;
                 // generate random number 
                 let rand = Math.random();
                 rand = Math.floor(rand * diff);
@@ -75,7 +75,7 @@ export default class AiUtilsModel {
                 //posArr[rand] will be the randomly selected start position of the ship
                 this.#placeShip(ship, posArr[rand], oneOrZero)
             }else {
-                let posArr = this.findHorizontalStartPos(this.checkEveryRow(), len);
+                let posArr = this.#findHorizontalStartPos(this.#checkEveryRow(), len);
                 let max = posArr.length - 1;
                 let min = 0;
                 let diff = max - min;
@@ -92,7 +92,7 @@ export default class AiUtilsModel {
     #placeShip(ship, startPos, direction) {
         this.numOfShips++;
         //update ship pos
-        ship.updatePos([...startPos], direction)
+        ship.updatePosAndDir([...startPos], direction)
         //update grid
         if(direction == 0) {
             for (var i = 0; i < ship.length; i++) {
@@ -108,13 +108,7 @@ export default class AiUtilsModel {
         }
     }
 
-    testChangeShipGrid() {
-        this.shipGrid[4][0] = true;
-        this.shipGrid[4][1] = true;
-        this.shipGrid[4][2] = true;
-    }
-
-    findVerticalStartPos(colMap, shipLength) {
+    #findVerticalStartPos(colMap, shipLength) {
         let verticalStartPosArr = [];
 
         for (let i = 0; i < colMap.size; i++) {
@@ -127,7 +121,7 @@ export default class AiUtilsModel {
         return verticalStartPosArr;
     }
 
-    findHorizontalStartPos(rowMap, shipLength) {
+    #findHorizontalStartPos(rowMap, shipLength) {
         let horizontalStartPosArr = [];
 
         for(let i = 0; i < rowMap.size; i++) {
@@ -142,7 +136,7 @@ export default class AiUtilsModel {
         return horizontalStartPosArr;
     }
 
-    checkEveryCol() {
+    #checkEveryCol() {
         const colMap = new Map();
         for (let i = 0; i < this.shipGrid[0].length; i++) {
             colMap.set(i, []);
@@ -158,7 +152,7 @@ export default class AiUtilsModel {
         return colMap;
     }
 
-    checkEveryRow() {
+    #checkEveryRow() {
         const rowMap = new Map();
         for (let i = 0; i < this.shipGrid.length; i++) {
             rowMap.set(i, []);
@@ -206,7 +200,7 @@ export default class AiUtilsModel {
         return true;
     }
 
-    shootAiMap(pos) {
+    playerShootAiMap(pos) {
         this.hitGrid[pos[0]][pos[1]] = true;
         let JsonInputPos = JSON.stringify(pos);
 
@@ -222,5 +216,15 @@ export default class AiUtilsModel {
             }
             break;
         }
+    }
+
+    checkIfAllShipsDestroied() {
+        let AllDestroied = true;
+        for(ship of this.shipArray) {
+            if(!ship.checkIfSunk()) {
+                AllDestroied = false;
+            }
+        }
+        return AllDestroied;
     }
 }

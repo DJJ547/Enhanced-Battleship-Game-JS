@@ -59,9 +59,7 @@ export default class PlayerUtilsModel {
         this.shipArray.push(ship);
         this.numOfShips++;
         //update ship pos
-        console.log(`position array before:${ship.posArray}`)
-        ship.updatePos([...startPos], direction)
-        console.log(`position array:${ship.posArray}`)
+        ship.updatePosAndDir([...startPos], direction)
         //update grid
         if(direction == 0) {
             for (var i = 0; i < ship.length; i++) {
@@ -81,7 +79,6 @@ export default class PlayerUtilsModel {
         // remove ship on the map
         this.shipArray.splice(this.shipArray.indexOf(ship), 1);
         let posArr = ship.getAllPos();
-        console.log(`in removeShip: ${posArr}`)
         for(let i = 0; i < posArr.length; i++) {
             this.shipGrid[posArr[i][0]][posArr[i][1]] = false;
         }
@@ -101,29 +98,19 @@ export default class PlayerUtilsModel {
         }
     }
 
-    // validateAiAttack(pos) {
-    //     if(this.hitGrid[pos[0]][pos[1]] == true) {
-    //         console.log('Position has been hit, Please enter a valid attack position');
-    //         return false;
-    //     }
-    //     return true;
-    // }
+    //This method will be having a complex AI firing technique algorithm
+    AiShootPlayerMap() {
+        this.hitGrid[pos[0]][pos[1]] = true;
+        
+    }
 
-    // shootPlayerMap(pos) {
-    //     this.hitGrid[pos[0]][pos[1]] = true;
-    //     let JsonInputPos = JSON.stringify(pos);
-
-    //     //traverse the shipArray and mark the position on the ship as true
-    //     for(let i = 0; i < this.shipArray.length; i++) {
-    //         for(let j = 0; j < this.shipArray[i].posArray.length; j++) {
-    //             let JsonPos = JSON.stringify(this.shipArray[i].posArray[j]);
-    //             if(JsonPos == JsonInputPos) {
-    //                 this.shipArray[i].hitArray[this.shipArray[i].posArray.indexOf(pos)] = true;
-    //                 console.log('this shot hit a ship')
-    //                 break;
-    //             }
-    //         }
-    //         break;
-    //     }
-    // }
+    checkIfAllShipsDestroied() {
+        let AllDestroied = true;
+        for(ship of this.shipArray) {
+            if(!ship.checkIfSunk()) {
+                AllDestroied = false;
+            }
+        }
+        return AllDestroied;
+    }
 }
