@@ -100,8 +100,31 @@ export default class PlayerUtilsModel {
 
     //This method will be having a complex AI firing technique algorithm
     AiShootPlayerMap() {
-        this.hitGrid[pos[0]][pos[1]] = true;
+        let AvailablePos = this.#getAllUnhitPos();
+        let max = AvailablePos.length - 1;
+        let min = 0;
+        let diff = max - min + 1;
+        // generate random number 
+        let rand = Math.random();
+        rand = Math.floor(rand * diff) + min;
+
+        let randomizedPos = AvailablePos[rand];
         
+        this.hitGrid[randomizedPos[0]][randomizedPos[1]] = true;
+        console.log(randomizedPos[0], randomizedPos[1]);
+        
+    }
+
+    #getAllUnhitPos() {
+        let allUnhitPos = [];
+        for (let i = 0; i < this.hitGrid.length; i++){
+            for (let j = 0; j < this.hitGrid[i].length; j++){
+                if (this.hitGrid[i][j] == false){
+                    allUnhitPos.push([i, j]);
+                }
+            }
+        }
+        return allUnhitPos;
     }
 
     checkIfAllShipsDestroied() {

@@ -42,13 +42,14 @@ function main() {
   // console.log(player.shipArray)
   // player.printMap();
   const ships = [ship1, ship2, ship3, ship4, ship5];
-  aiPlayer.setShipArray(ships);
+  aiPlayer.setShipArray([...ships]);
   aiPlayer.printMap();
   aiPlayer.randomlyPlaceAllShips();
   console.log('================== after randomly assign ships ===================')
   aiPlayer.printMap();
 
-  console.log(aiPlayer.shipArray)
+  
+    player.placeShip
 
   // let shootPos = [3, 4]
   // if(aiPlayer.validatePlayerAttack([...shootPos])){
