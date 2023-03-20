@@ -30,16 +30,29 @@ export default class AiUtilsModel {
 
     printMap() {
         console.log('Display ship map:')
-        for (var i = 0; i < this.length; i++) {
-            console.log(JSON.stringify(this.shipGrid[i]))
-            console.log()
+        for (let i = 0; i < this.shipGrid.length; i++) {
+            for (let j = 0; j < this.shipGrid[i].length; j++) {
+                if(this.shipGrid[i][j] == true) {
+                    process.stdout.write("  " + this.#getShipLenToDisplay(i, j));
+                }else {
+                    process.stdout.write("  O");
+                }
+            }
+            process.stdout.write("\n");
         }
+    }
 
-        console.log('Display hit map:')
-        for (var i = 0; i < this.length; i++) {
-            console.log(JSON.stringify(this.hitGrid[i]))
-            console.log()
+    #getShipLenToDisplay(y, x) {
+        for (const ship of this.shipArray) {
+            let JStrPos = JSON.stringify([y,x])
+            for (const pos of ship.posArray) {
+                if(JSON.stringify(pos) == JStrPos) {
+                    return ship.length;
+                }
+            }
         }
+        //throw an error
+        console.log('cannot find a match position in ship array');
     }
 
     validatePos(ship, pos, direction) {
@@ -59,126 +72,124 @@ export default class AiUtilsModel {
         this.shipArray = ships;
     }
 
+    #switchDirection(direction) {
+        let switchedDirection;
+        direction == 1? switchedDirection = 0: switchedDirection = 1;
+        return switchedDirection;
+    }
+
+    #RandomSelectPos(arr) {
+        let min = 0;
+        let max = arr.length - 1;
+        let diff = max - min + 1;
+        // generate a random array index
+        let rand = Math.floor(Math.random() * diff) + min;
+        return arr[rand];
+    }
+
     randomlyPlaceAllShips() {
         for (const ship of this.shipArray){
             let oneOrZero = (Math.random()>=0.5)? 1 : 0;
+            oneOrZero == 1?console.log('ship is vertical'):console.log('ship is horizontal');
             let len = ship.length;
-            if (oneOrZero == 1) {
-                let posArr = this.#findVerticalStartPos(this.#checkEveryCol(), len);
-                let max = posArr.length - 1;
-                let min = 0;
-                let diff = max - min + 1;
-                // generate random number 
-                let rand = Math.random();
-                rand = Math.floor(rand * diff);
-                rand = rand + min;
-                //posArr[rand] will be the randomly selected start position of the ship
-                this.#placeShip(ship, posArr[rand], oneOrZero)
-            }else {
-                let posArr = this.#findHorizontalStartPos(this.#checkEveryRow(), len);
-                let max = posArr.length - 1;
-                let min = 0;
-                let diff = max - min;
-                // generate random number 
-                let rand = Math.random();
-                rand = Math.floor(rand * diff);
-                rand = rand + min;
-                //posArr[rand] will be the randomly selected start position of the ship
-                this.#placeShip(ship, posArr[rand], oneOrZero)
+            let posArr = this.findVerticalOrHorizontalPositions(len, oneOrZero);
+
+            //=
+            for (const pos of posArr) {
+                console.log(`All available positions: ${pos}`);
             }
+            //=
+
+            if(!posArr.length) {
+                console.log("ship direction cannot be applied, changed direction!")
+                oneOrZero = this.#switchDirection(oneOrZero);
+                posArr = this.findVerticalOrHorizontalPositions(len, oneOrZero);
+            }
+            let selectedPos = this.#RandomSelectPos(posArr);
+            //verArr[rand] will be the randomly selected start position of the ship
+            this.#placeShip(ship, selectedPos[0], selectedPos[1], oneOrZero);
         }
     }
 
-    #placeShip(ship, startPos, direction) {
+    #placeShip(ship, yPos, xPos, direction) {
         this.numOfShips++;
         //update ship pos
-        ship.updatePosAndDir([...startPos], direction)
+        ship.updatePosAndDir(yPos, xPos, direction)
         //update grid
         if(direction == 0) {
-            for (var i = 0; i < ship.length; i++) {
-                this.shipGrid[startPos[0]][startPos[1]] = true;
-                startPos[1]++;
+            for (let i = 0; i < ship.length; i++) {
+                this.shipGrid[yPos][xPos] = true;
+                xPos++;
             }
 
         }else{
-            for (var i = 0; i < ship.length; i++) {
-                this.shipGrid[startPos[0]][startPos[1]] = true;
-                startPos[0]++;
+            for (let i = 0; i < ship.length; i++) {
+                this.shipGrid[yPos][xPos] = true;
+                yPos++;
             }
         }
-    }
-
-    #findVerticalStartPos(colMap, shipLength) {
-        let verticalStartPosArr = [];
-
-        for (let i = 0; i < colMap.size; i++) {
-            for (let j = 0; j + shipLength <= colMap.get(i).length; j++) {
-                if (colMap.get(i)[j] + 1 == colMap.get(i)[j + 1] && colMap.get(i)[j + 1] + 1 == colMap.get(i)[j + 2]) {
-                    verticalStartPosArr.push([j, i]);
+        
+        //=
+        console.log('Display map after each placement:')
+        for (let i = 0; i < this.shipGrid.length; i++) {
+            for (let j = 0; j < this.shipGrid[i].length; j++) {
+                if(this.shipGrid[i][j] == true) {
+                    process.stdout.write("  " + this.#getShipLenToDisplay(i, j));
+                }else {
+                    process.stdout.write("  O");
                 }
             }
+            process.stdout.write("\n");
         }
-        return verticalStartPosArr;
+        //=
     }
 
-    #findHorizontalStartPos(rowMap, shipLength) {
-        let horizontalStartPosArr = [];
-
-        for(let i = 0; i < rowMap.size; i++) {
-            if (rowMap.get(i).length >= shipLength) {
-                for(let j = 0; j + shipLength <= rowMap.get(i).length; j++) {
-                    if (rowMap.get(i)[j] + 1 == rowMap.get(i)[j + 1] && rowMap.get(i)[j + 1] + 1 == rowMap.get(i)[j + 2]) {
-                        horizontalStartPosArr.push([i, j]);
+    findVerticalOrHorizontalPositions(shipLen, verOrHor) {
+        let posArr = [];
+        if(verOrHor == 1) {
+            for (let i = 0; i < this.shipGrid.length - shipLen + 1; i++) {
+                for (let j = 0; j < this.shipGrid[i].length; j++) {
+                    let shipPartCtr = 0;
+                    let ctr = 0;
+                    while(ctr < shipLen) {
+                        if(this.shipGrid[i + ctr][j]) {
+                            shipPartCtr++;
+                            break;
+                        }
+                        ctr++;
+                    }
+                    if(shipPartCtr == 0) {
+                        posArr.push([i, j]);
+                    }
+                }
+            }
+        }else {
+            for (let i = 0; i < this.shipGrid.length; i++) {
+                for (let j = 0; j < this.shipGrid[i].length - shipLen + 1; j++) {
+                    let shipPartCtr = 0;
+                    let ctr = 0;
+                    while(ctr < shipLen) {
+                        if(this.shipGrid[i][j + ctr]) {
+                            shipPartCtr++;
+                            break;
+                        }
+                        ctr++;
+                    }
+                    if(shipPartCtr == 0) {
+                        posArr.push([i, j]);
                     }
                 }
             }
         }
-        return horizontalStartPosArr;
+        return posArr;
     }
 
-    #checkEveryCol() {
-        const colMap = new Map();
-        for (let i = 0; i < this.shipGrid[0].length; i++) {
-            colMap.set(i, []);
-        }
-        for (let i = 0; i < this.shipGrid.length; i++) {
-            for (let j = 0; j < this.shipGrid[i].length; j++) {
-                if (this.shipGrid[i][j] == false) {
-                    let colArr = colMap.get(j);
-                    colArr.push(i);
-                }
-            }
-        }
-        return colMap;
-    }
-
-    #checkEveryRow() {
-        const rowMap = new Map();
-        for (let i = 0; i < this.shipGrid.length; i++) {
-            rowMap.set(i, []);
-        }
-        for (let i = 0; i < this.shipGrid.length; i++) {
-            for (let j = 0; j < this.shipGrid[i].length; j++) {
-                if (this.shipGrid[i][j] == false) {
-                    let rowArr = rowMap.get(i);
-                    rowArr.push(j);
-                }
-            }
-        }
-        return rowMap;
-    }
-
-    // removeShip(ship) {
-    //     // remove ship on the map
-    //     this.shipArray.splice(this.shipArray.indexOf(ship), 1);
-    //     let posArr = ship.getAllPos();
-    //     console.log(`in removeShip: ${posArr}`)
-    //     for(let i = 0; i < posArr.length; i++) {
-    //         this.shipGrid[posArr[i][0]][posArr[i][1]] = false;
-    //     }
-    //     //clear position array in current ship
-    //     ship.posArray = [];
-    //     ship.hitArray = [];
+    // testVertical() {
+    //     this.shipGrid[1][0] = true;
+    //     this.shipGrid[1][1] = true;
+    //     this.shipGrid[3][1] = true;
+    //     this.shipGrid[3][2] = true;
+    //     this.shipGrid[3][3] = true;
     // }
 
     //only called before game starts

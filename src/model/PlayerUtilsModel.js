@@ -30,47 +30,60 @@ export default class PlayerUtilsModel {
 
     printMap() {
         console.log('Display ship map:')
-        for (var i = 0; i < this.length; i++) {
-            console.log(JSON.stringify(this.shipGrid[i]))
-            console.log()
-        }
-
-        console.log('Display hit map:')
-        for (var i = 0; i < this.length; i++) {
-            console.log(JSON.stringify(this.hitGrid[i]))
-            console.log()
+        for (let i = 0; i < this.shipGrid.length; i++) {
+            for (let j = 0; j < this.shipGrid[i].length; j++) {
+                if(this.shipGrid[i][j] == true) {
+                    process.stdout.write("  " + this.#getShipLenToDisplay(i, j));
+                }else {
+                    process.stdout.write("  O");
+                }
+            }
+            process.stdout.write("\n");
         }
     }
 
-    validatePos(ship, pos, direction) {
-        if(pos[0] < 0 || pos[1] < 0 || pos[0] > this.length || pos[1] > this.width) {
+    #getShipLenToDisplay(y, x) {
+        for (const ship of this.shipArray) {
+            let JStrPos = JSON.stringify([y,x])
+            for (const pos of ship.posArray) {
+                if(JSON.stringify(pos) == JStrPos) {
+                    return ship.length;
+                }
+            }
+        }
+        //throw an error
+        console.log('cannot find a match position in ship array');
+    }
+
+    validatePos(ship, yPos, xPos, direction) {
+        if(yPos < 0 || xPos < 0 || yPos > this.length || xPos > this.width) {
             return false;
         }
-        if(direction == 0 && pos[1] + ship.length > this.width){
+        if(direction == 0 && xPos + ship.length > this.width){
             return false;
         }
-        if(direction == 1 && pos[0] + ship.length > this.length){
+        if(direction == 1 && yPos + ship.length > this.length){
             return false;
         }
         return true;
     }
 
-    placeShip(ship, startPos, direction) {
+    placeShip(ship, yPos, xPos, direction) {
         this.shipArray.push(ship);
         this.numOfShips++;
         //update ship pos
-        ship.updatePosAndDir([...startPos], direction)
+        ship.updatePosAndDir(yPos, xPos, direction)
         //update grid
         if(direction == 0) {
-            for (var i = 0; i < ship.length; i++) {
-                this.shipGrid[startPos[0]][startPos[1]] = true;
-                startPos[1]++;
+            for (let i = 0; i < ship.length; i++) {
+                this.shipGrid[yPos][xPos] = true;
+                xPos++;
             }
 
         }else{
-            for (var i = 0; i < ship.length; i++) {
-                this.shipGrid[startPos[0]][startPos[1]] = true;
-                startPos[0]++;
+            for (let i = 0; i < ship.length; i++) {
+                this.shipGrid[yPos][xPos] = true;
+                yPos++;
             }
         }
     }

@@ -9,19 +9,19 @@ export default class ShipModel {
     }
 
     //For direction, 0 = horizontal, 1 = vertical
-    updatePosAndDir(placePos, direction) {
+    updatePosAndDir(yPos, xPos, direction) {
         this.direction = direction;
         if(direction == 0){
             for(var i = 0; i < this.length; i++) {
-                this.posArray.push([...placePos]);
+                this.posArray.push([yPos, xPos]);
                 this.hitArray.push(false);
-                placePos[1]++;
+                xPos++;
             }
         }else{
             for(var i = 0; i < this.length; i++) {
-                this.posArray.push([...placePos]);
+                this.posArray.push([yPos, xPos]);
                 this.hitArray.push(false);
-                placePos[0]++;
+                yPos++;
             }
         }
     }
